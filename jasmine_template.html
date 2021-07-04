@@ -3,32 +3,145 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>{{pageTitle}}</title>
 <style>
-body { background-color: #eeeeee; padding: 0; margin: 5px; overflow-y: scroll; }
-#HTMLReporter h1 { font-size: 12px; font-weight: normal; text-align: right; margin: 10px 0 10px 0 !important; }
-#HTMLReporter { font-size: 11px; font-family: Monaco, "Lucida Console", monospace; line-height: 14px; color: #333333; }
-#HTMLReporter a { text-decoration: none; }
-#HTMLReporter a:hover { text-decoration: underline; }
-#HTMLReporter p, #HTMLReporter h1, #HTMLReporter h2, #HTMLReporter h3, #HTMLReporter h4, #HTMLReporter h5, #HTMLReporter h6 { margin: 0; line-height: 14px; }
-#HTMLReporter .banner, #HTMLReporter .symbolSummary, #HTMLReporter .summary, #HTMLReporter .resultMessage, #HTMLReporter .specDetail .description, #HTMLReporter .alert .bar, #HTMLReporter .stackTrace { padding-left: 9px; padding-right: 9px; }
-{{#sections}}#HTMLReporter .summary { padding: 0; }{{/sections}}
-#HTMLReporter #jasmine_content { position: fixed; right: 100%; }
-#HTMLReporter .version { color: #aaaaaa; }
-#HTMLReporter .banner { margin-top: 14px; }
-#HTMLReporter .duration { color: #aaaaaa; float: right; }
-#HTMLReporter .exceptions { color: #fff; float: right; margin-top: 5px; margin-right: 5px; }
-#HTMLReporter .bar { line-height: 28px; font-size: 14px; display: block; color: #eee; }
-#HTMLReporter .runningAlert { background-color: #666666; }
-#HTMLReporter .skippedAlert { background-color: #aaaaaa; }
-#HTMLReporter .skippedAlert:first-child { background-color: #333333; }
-#HTMLReporter .skippedAlert:hover { text-decoration: none; color: white; text-decoration: underline; }
-#HTMLReporter .passingAlert { background-color: #a6b779; }
-#HTMLReporter .passingAlert:first-child { background-color: #5e7d00; }
-#HTMLReporter .failingAlert { background-color: #cf867e; }
-#HTMLReporter .failingAlert:first-child { background-color: #b03911; }
-#HTMLReporter .results { margin-top: 14px; }
-#HTMLReporter #details { display: none; }
-#HTMLReporter .resultsMenu { color: #999; background-color: #fff; }
+*, *:after, *:before {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+body {
+  font-family: Helvetica Neue, Helvetica, Arial;
+  font-size: 14px;
+  color: #333;
+  background-color: #eee;
+}
 
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+a {
+  color: #0074D9;
+  text-decoration: none;
+}
+
+.wrapper {
+  min-height: 100%;
+  height: auto !important;
+  margin: 0 auto -48px;
+}
+
+.pad1 {
+  padding: 10px;
+}
+
+.white {
+  background-color: #fff;
+}
+
+h1 {
+  font-size: 20px;
+  margin: 0;
+  display: block;
+}
+
+.clearfix {
+  display: block;
+}
+
+.clearfix:after {
+  content: '';
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+}
+
+.pad1y {
+  padding: 10px 0;
+}
+.pad1x {
+  padding: 0 10px;
+}
+
+.space-right2 {
+  padding-right: 20px;
+}
+
+.fl {
+  float: left;
+}
+
+.strong {
+  font-weight: bold;
+}
+
+.quiet {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.fraction {
+  font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+  font-size: 10px;
+  color: #555;
+  background-color: #E8E8E8;
+  padding: 4px 5px;
+  border-radius: 3px;
+  vertical-align: middle;
+}
+
+.status-line {
+  height: 10px;
+}
+
+.status-line.low {
+  background-color: #C21F39;
+}
+
+.status-line.medium {
+  background-color: #f9cd0b;
+}
+
+.status-line.high {
+  background-color: rgb(77,146,33);
+}
+.hidden {
+  display: none;
+}
+
+.low {
+  background: #FCE1E5;
+}
+
+.medium {
+  background: #fff4c2;
+}
+
+.high {
+  background: rgb(230,245,208);
+}
+
+#HTMLReporter .results, #HTMLReporter .suite { margin-top: 10px;  }
+#HTMLReporter .summary { padding-left: 10px; padding-right: 10px; line-height: 18px; }
+#HTMLReporter .summary .suite .suite, #HTMLReporter .summary .specSummary { margin-left: 10px; }
+#HTMLReporter .summary .specSummary.passed { color: rgb(77,146,33);; }
+#HTMLReporter .summary .specSummary.failed { color: #C21F39; }
+#HTMLReporter .summary .specSummary.skipped { color: #f9cd0b; }
+#HTMLReporter #details { 
+  display: none;
+  padding-left: 10px;
+  padding-right: 10px;
+  line-height: 18px;
+}
+#HTMLReporter #details .specDetail { margin-bottom: 28px; }
+#HTMLReporter #details .specDetail .description { 
+  display: block;
+  color: white;
+  background-color: #C21F39; 
+  padding-left: 10px;
+  padding-right: 10px;
+}
 #HTMLReporter .summaryMenuItem { font-weight: normal; text-decoration: none; margin-right: 5px; color: #333; }
 #HTMLReporter .detailsMenuItem { font-weight: normal; text-decoration: none; margin-left: 5px; color: #999; }
 
@@ -40,77 +153,62 @@ body { background-color: #eeeeee; padding: 0; margin: 5px; overflow-y: scroll; }
 
 #HTMLReporter.showDetails .summary { display: none; }
 #HTMLReporter.showDetails #details { display: block; }
-#HTMLReporter .summary { margin-top: 14px; margin-bottom: 40px; }
-#HTMLReporter .summary .suite .suite, #HTMLReporter .summary .specSummary { margin-left: 14px; }
-#HTMLReporter .summary .specSummary.passed { color: #5e7d00; }
-#HTMLReporter .summary .specSummary.failed { color: #b03911; }
-#HTMLReporter .summary .specSummary.skipped { color: #ba9d37; }
-#HTMLReporter .description + .suite { margin-top: 0; }
-#HTMLReporter .suite { margin-top: 14px; }
-#HTMLReporter .suite a { color: #333333; }
-#HTMLReporter #details .specDetail { margin-bottom: 28px; }
-#HTMLReporter #details .specDetail .description { display: block; color: white; background-color: #b03911; }
-#HTMLReporter .resultMessage { padding-top: 14px; color: #333333; }
-#HTMLReporter .resultMessage span.result { display: block; }
-#HTMLReporter .stackTrace { margin: 5px 0 0 0; max-height: 224px; overflow: auto; 
-    line-height: 18px; color: #666666; border: 1px solid #ddd; background: white; white-space: pre; }
 
-
-.fold-buttons { float: right; }
-.fold-buttons a { color: #fff; font-size: 12px; }
-{{^sections}}.fold-buttons { display: none } {{/sections}}
-#HTMLReporter .br { margin-top: 8px; }
-#HTMLReporter .section-starter { font-size: 14px; line-height: 18px }
-#HTMLReporter .summary-section { 
-  cursor: -webkit-zoom-out; cursor: -moz-zoom-out; cursor: zoom-out; 
-  background: #fafafa; 
-  padding: 10px; 
-  border-bottom: #eaeaea 1px solid; }
-#HTMLReporter .summary-section.folded { 
-  cursor: -webkit-zoom-in; cursor: -moz-zoom-in; cursor: zoom-in; 
-  padding-bottom: 8px;
+#HTMLReporter .stackTrace {
+  margin: 5px 0 0 0;
+  max-height: 224px;
+  overflow: auto; 
+  line-height: 18px;
+  color: #666666;
+  border: 1px solid #ddd;
+  background: white;
+  white-space: pre;
+  padding: 10px;
 }
-#HTMLReporter .summary-section.folded div { display: none }
-#HTMLReporter .summary-section.folded div.section-starter { display: block }
-/*#HTMLReporter .summary-section:hover { background: #e9e9e9; }*/
-#HTMLReporter .summary-section:hover { background: #f5f5f5; }
-#HTMLReporter .summary-section-totals { 
-  font-size: 11px;
-  display: none; 
-  margin-left: 11px; 
-  overflow: hidden; 
-  position: relative;
-  top: -1px; 
-}
-#HTMLReporter .summary-section.folded .summary-section-totals { display: inline; }
-#HTMLReporter .summary-section-total { color: #fff; vertical-align: baseline; padding: 1px 8px; }
-#HTMLReporter .summary-section-total.passed { background: #5e7d00;  }
-#HTMLReporter .summary-section-total.failed { background: #b03911;  }
-#HTMLReporter .summary-section-total.skipped { background: #ba9d37;  }
-
-#HTMLReporter { font-size: 12px; line-height: 18px; } /*larget font-size*/
-
 </style>
 </head>
 
 <body id="HTMLReporter" class="html-reporter{{#focusOnFailures}} showDetails{{/focusOnFailures}}">
-<h1>Tested in {{browserName}} on {{date}}</h1>
-
+  {{#results}}
+  <div class="pad1 white">
+  <h1>{{pageTitle}}</h1>
+  <div class="clearfix">
+    <div class="fl pad1y space-right2">
+      <span class="strong">{{failed_pct}}</span>
+      <span class="quiet">Failed</span>
+      <span class="fraction">{{failed}}/{{total}}</span>
+    </div>
+    <div class="fl pad1y space-right2">
+      <span class="strong">{{skipped_pct}}</span>
+      <span class="quiet">Skipped</span>
+      <span class="fraction">{{skipped}}/{{total}}</span>
+    </div>
+    <div class="fl pad1y space-right2">
+      <span class="strong">{{totalTime}}</span>
+      <span class="quiet">ms</span>
+    </div>
+  </div>
+<p class="quiet">Tested in <em>{{browserName}}</em> on {{date}}</p>
+</div>
 <div class="alert">
-{{#results}}
 {{#hasFailed}}
 <!-- <span class="failingAlert bar">Failed {{failed}} specs</span> -->
-<span class="failingAlert bar"><span class="fold-buttons"><a href="#" onclick="fold();">Fold</a> | 
+<!--<span class="failingAlert bar"><span class="fold-buttons"><a href="#" onclick="fold();">Fold</a> | 
   <a href="#" onclick="unfold();">Unfold</a></span>{{total}} specs, {{failed}} failed, {{skipped}} pending</span>
-<span class="resultsMenu bar">
-<a class="summaryMenuItem" onclick="showSummary();" href="#">Spec List<a>|<a 
+<span class="resultsMenu bar">-->
+  <div class="status-line low">
+  </div>
+  <div class="pad1x">
+  <a class="summaryMenuItem" onclick="showSummary();" href="#">Spec List<a>|<a 
    class="detailsMenuItem" onclick="showFailures();" href="#">Failures</a>
-</span>
+  </div>
 {{/hasFailed}}
 {{^hasFailed}}
   {{#hasSuccess}}
-  <span class="passingAlert bar"><span class="fold-buttons"><a href="#" onclick="fold();">Fold</a> | 
-  <a href="#" onclick="unfold();">Unfold</a></span>{{total}} specs, {{failed}} failed, {{skipped}} pending</span>
+  <div class="status-line high">
+  </div>
+<!--  <span class="passingAlert bar"><span class="fold-buttons"><a href="#" onclick="fold();">Fold</a> | 
+  <a href="#" onclick="unfold();">Unfold</a></span>{{total}} specs, {{failed}} failed, {{skipped}} pending</span>-->
   {{/hasSuccess}}
 {{/hasFailed}}
 {{/results}}
@@ -149,7 +247,7 @@ body { background-color: #eeeeee; padding: 0; margin: 5px; overflow-y: scroll; }
   <div class="specDetail {{state}}">
     <span class="description">{{name}} {{description}}</span>
     <div class="stackTrace">
-      <div class="resultMessage">{{log}}</div>
+      <div class="resultMessage">{{{log}}}</div>
     </div>
   </div>
   {{/specs}}
@@ -180,7 +278,7 @@ function toggleFold() { (folded) ? unfold() : fold(); }
 function fold() {
   var els = document.querySelectorAll('.summary-section');
   for (var i = 0; i < els.length; i++) {
-    els[i].className = 'summary-section folded';
+    els[i].className = 'summary-section hidden';
   }
   folded = true;
 }

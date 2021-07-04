@@ -4,8 +4,13 @@ var fs = require('fs');
 var _ = require('lodash');
 var mu = require('mu2');
 
+function toPctString(num) {
+	const t = Math.floor(num);
+	const n = Math.round((num - t) * 100);
+	return t + "."+n+"%";
+}
 
-var HtmlReporter = function(baseReporterDecorator, basePath, config, emitter, logger, helper, formatError) {
+var HtmlReporter = function(baseReporterDecorator, config, emitter, logger, helper, formatError) {
 	config = config || {};
 	var pkgName = config.suite;
 	var log = logger.create('reporter.html');
@@ -36,13 +41,13 @@ var HtmlReporter = function(baseReporterDecorator, basePath, config, emitter, lo
 			timestamp : timestamp,
 			hostname : os.hostname(),
 			suites : {},
-			sections: null // for preserveDescribeNesting
+			sections: null, // for preserveDescribeNesting
 		};
 		
 		env[browser.id] = { // preserveDescribeNesting stuff
 			currentSuiteName: [], // current set of `describe` names as an array of strings
 			currentIndent: 0, // in 'levels'
-			sectionIndex: -1 // current top-level `describe` in processing
+			sectionIndex: -1, // current top-level `describe` in processing 
 		};
 	};
 
@@ -74,7 +79,7 @@ var HtmlReporter = function(baseReporterDecorator, basePath, config, emitter, lo
 			// whether to select the Failures tab automatically 
 			results.focusOnFailures = config.focusOnFailures !== false && results.results.hasFailed;
 			
-			var outputDir = path.resolve(basePath, config.outputDir || 'karma_html');
+			var outputDir = config.outputDir || 'karma_html';
 			var reportName = config.reportName || config.middlePathDir || results.browserName;
 			results.pageTitle = config.pageTitle || reportName; // inject into head 
 			if (config.urlFriendlyName) reportName = reportName.replace(/ /g, '_');
@@ -84,6 +89,10 @@ var HtmlReporter = function(baseReporterDecorator, basePath, config, emitter, lo
 			results.date = new Date().toDateString();
 			
 			var templatePath = config.templatePath || __dirname + "/jasmine_template.html";
+			results.results.success_pct = toPctString(results.results.success / results.results.total * 100);
+			results.results.failed_pct = toPctString(results.results.failed / results.results.total * 100);
+			results.results.skipped_pct = toPctString(results.results.skipped / results.results.total * 100);
+			console.log(results);
 			var template = mu.compileAndRender(templatePath, results);
 			template.pause();
 			
@@ -113,7 +122,6 @@ var HtmlReporter = function(baseReporterDecorator, basePath, config, emitter, lo
 
 	this.specSuccess = this.specSkipped = this.specFailure = function(browser, result) {
 		var suite = getOrCreateSuite(browser, result);
-        	result.log = _.map(result.log, formatError);
 		suite.specs.push(result);
 	};
 
@@ -158,7 +166,7 @@ var HtmlReporter = function(baseReporterDecorator, basePath, config, emitter, lo
 					sections[e.sectionIndex].lines.push({ // `describe` line
 						className: 'description'+ (!e.currentIndent ? ' section-starter' : ' br'),
 						style: 'margin-left:'+ (e.currentIndent * 14) + 'px',
-						value: result.suite[e.currentIndent]
+						value: result.suite[e.currentIndent],
 					});
 					describeAdded = true;
 				}
@@ -174,7 +182,7 @@ var HtmlReporter = function(baseReporterDecorator, basePath, config, emitter, lo
 				sections[e.sectionIndex].lines.push({ // `describe` line
 					className: 'description section-starter',
 					style: 'margin-left:'+ (e.currentIndent * 14) + 'px',
-					value: 'Anonymous Suite'
+					value: 'Anonymous Suite',
 				});
 				e.currentIndent = 1;
 			}
@@ -183,7 +191,7 @@ var HtmlReporter = function(baseReporterDecorator, basePath, config, emitter, lo
 									 (result.skipped ? 'skipped' : result.success ? 'passed' : 'failed') +
 									 (e.currentIndent < lastIndent && !describeAdded ? ' br' : ''),
 				style: 'margin-left:'+ (e.currentIndent * 14) + 'px',
-				value: result.description
+				value: result.description,
 			});
 			sections[e.sectionIndex][result.skipped ? 'skipped' : result.success ? 'passed' : 'failed']++;
 		}
@@ -206,7 +214,7 @@ var HtmlReporter = function(baseReporterDecorator, basePath, config, emitter, lo
 				for (n = 0; n < k.length; n++) {
 					if (browser.sections[i][ k[n] ]) browser.sections[i].lines[0].totals.push({
 						result: k[n],
-						count: browser.sections[i][ k[n] ]
+						count: browser.sections[i][ k[n] ],
 					});
 				}
 			}
@@ -246,7 +254,7 @@ var HtmlReporter = function(baseReporterDecorator, basePath, config, emitter, lo
 	}
 
 	function getOverallState(specs) {
-		if (_.some(specs, function(spec) {
+		if (_.any(specs, function(spec) {
 			return spec.state === "failed";
 		})) {
 			return "failed";
@@ -275,7 +283,7 @@ var HtmlReporter = function(baseReporterDecorator, basePath, config, emitter, lo
 
 };
 
-HtmlReporter.$inject = ['baseReporterDecorator', 'config.basePath', 'config.htmlReporter', 'emitter', 'logger', 'helper', 'formatError'];
+HtmlReporter.$inject = ['baseReporterDecorator', 'config.htmlReporter', 'emitter', 'logger', 'helper', 'formatError'];
 
 // PUBLISH DI MODULE
 module.exports = {
