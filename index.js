@@ -254,7 +254,7 @@ var HtmlReporter = function(baseReporterDecorator, config, emitter, logger, help
 	}
 
 	function getOverallState(specs) {
-		if (_.any(specs, function(spec) {
+		if (_.some(specs, function(spec) {
 			return spec.state === "failed";
 		})) {
 			return "failed";
