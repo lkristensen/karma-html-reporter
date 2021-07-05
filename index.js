@@ -92,7 +92,7 @@ var HtmlReporter = function(baseReporterDecorator, config, emitter, logger, help
 			results.results.success_pct = toPctString(results.results.success / results.results.total * 100);
 			results.results.failed_pct = toPctString(results.results.failed / results.results.total * 100);
 			results.results.skipped_pct = toPctString(results.results.skipped / results.results.total * 100);
-			console.log(results);
+
 			var template = mu.compileAndRender(templatePath, results);
 			template.pause();
 			
